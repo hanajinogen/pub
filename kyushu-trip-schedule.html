@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026理一旅行(福岡) しおり＆スポット集</title>
+  <style>
+    :root {
+      --primary: #1d4ed8;
+      --primary-light: #eff6ff;
+      --text: #1f2937;
+      --text-muted: #4b5563;
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --accent: #d97706;
+      --badge-food: #ea580c;
+      --badge-spa: #0284c7;
+      --badge-spot: #16a34a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      padding: 16px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    header {
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      color: #ffffff;
+      padding: 24px 20px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    header h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    header p { font-size: 0.9rem; opacity: 0.95; }
+    
+    /* マップリンク用バナー */
+    .map-banner {
+      background: #ffffff;
+      border: 2px solid #3b82f6;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.08);
+    }
+    .map-banner-text {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+    .map-btn {
+      display: inline-flex;
+      align-items: center;
+      background-color: #2563eb;
+      color: #ffffff !important;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none !important;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+    .map-btn:hover { background-color: #1d4ed8; }
+
+    .day-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .day-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 8px;
+    }
+    .badge {
+      background-color: var(--primary);
+      color: white;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: bold;
+    }
+    .timeline { list-style: none; position: relative; padding-left: 20px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background-color: var(--border);
+    }
+    .timeline-item { position: relative; margin-bottom: 18px; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      border: 2px solid #ffffff;
+    }
+    .time { font-weight: bold; color: var(--primary); font-size: 0.9rem; }
+    .content h3 { font-size: 1rem; margin: 4px 0; }
+    .content p { font-size: 0.9rem; color: var(--text-muted); }
+    .sub-stations {
+      background-color: #f8fafc;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin: 6px 0;
+      font-size: 0.85rem;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+    .sub-stations span { display: inline-block; margin-right: 8px; }
+    a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+
+    /* 候補地リスト用 */
+    .choices-box {
+      background-color: #f8fafc;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px dashed #cbd5e1;
+    }
+    .choices-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+    .choice-item {
+      display: inline-block;
+      margin-right: 12px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+    .tag {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: white;
+      margin-right: 4px;
+    }
+    .tag-food { background-color: var(--badge-food); }
+    .tag-spa { background-color: var(--badge-spa); }
+    .tag-spot { background-color: var(--badge-spot); }
+
+    /* 温泉特集カード */
+    .spa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .spa-card {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .spa-card h4 {
+      font-size: 0.95rem;
+      color: #166534;
+      margin-bottom: 4px;
+    }
+    .spa-card p {
+      font-size: 0.85rem;
+      color: #4b5563;
+    }
+
+    .notice-box {
+      background-color: #fffbeb;
+      border-left: 4px solid var(--accent);
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #92400e;
+    }
+    footer { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>九州旅行 しおり</h1>
+      <p>日程: 2026年10月23日(金) 〜 10月25日(日)</p>
+      <p>訪問エリア: 博多・筑紫野（二日市温泉）・久留米・吉野ヶ里</p>
+    </header>
+
+    <!-- Googleマップ共有リストへのリンク -->
+    <div class="map-banner">
+      <div class="map-banner-text">📍 Googleマップ共有リスト「2026理一旅行(福岡)」</div>
+      <a href="https://maps.app.goo.gl/vHzKzKx1F3f9Lqsk9?g_st=i" target="_blank" rel="noopener noreferrer" class="map-btn">
+        マップを開く ↗
+      </a>
+    </div>
+
+    <!-- DAY 1 -->
+    <div class="day-card">
+      <div class="day-title">
+        <span class="badge">1日目</span>
+        <span>10/23(金) 長野から博多へ移動 ＆ 博多・二日市温泉</span>
+      </div>
+      <ul class="timeline">
+        <li class="timeline-item">
+          <div class="time">12:00</div>
+          <div class="content">
+            <h3>長野駅 出発（特急しなの12号）</h3>
+            <div class="sub-stations">
+              <span>長野 12:00発</span> →
+              <span>篠ノ井 12:08発</span> →
+              <span>塩尻 13:03発</span> →
+              <span>名古屋 15:05着</span>
+            </div>
+            <p>※名古屋駅での乗換時間（約5分）に備えて下車準備をしておくと安心です。</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">15:10</div>
+          <div class="content">
+            <h3>名古屋駅 出発（新幹線のぞみ）</h3>
+            <p>名古屋 15:10発 → 博多 18:30着</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">19:00 - 21:30</div>
+          <div class="content">
+            <h3>博多で夕食 ＆ 散策</h3>
+            <div class="choices-box">
+              <div class="choices-title">▼ 保存リストからの候補:</div>
+              <div class="choice-item">🍲 <span class="tag tag-food">もつ鍋</span><a href="https://www.motu-ooyama.com/" target="_blank" rel="noopener noreferrer">博多もつ鍋 おおやま 本店</a></div>
+              <div class="choice-item">🍜 <span class="tag tag-food">うどん</span><a href="https://tabelog.com/fukuoka/A4001/A400101/40003714/" target="_blank" rel="noopener noreferrer">牧のうどん 博多バスターミナル店</a></div>
+              <div class="choice-item">🛍️ <span class="tag tag-spot">商業施設</span><a href="https://canalcity.co.jp/" target="_blank" rel="noopener noreferrer">キャナルシティ博多</a></div>
+            </div>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">21:45 - 22:30</div>
+          <div class="content">
+            <h3>筑紫野へ移動 ＆ チェックイン</h3>
+            <p>JR博多駅 → JR二日市駅（快速約15分）。駅から徒歩約10分。</p>
+            <p>🏨 <a href="http://www.ivyhotel.net/" target="_blank" rel="noopener noreferrer"><strong>アイビーホテル筑紫野</strong></a>（23:00チェックイン締切）</p>
+            <p style="margin-top: 4px; font-size: 0.85rem; color: #0284c7;">
+              ※宿から徒歩3分に源泉掛け流しの「<a href="https://hakatayu.jp/" target="_blank" rel="noopener noreferrer">二日市温泉 博多湯</a>」（23:00まで営業）があります。
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-card">
+      <div class="day-title">
+        <span class="badge">2日目</span>
+        <span>10/24(土) 博多・久留米の観光＆名物グルメ</span>
+      </div>
+      <ul class="timeline">
+        <li class="timeline-item">
+          <div class="time">午前（博多・天神エリア）</div>
+          <div class="content">
+            <h3>博多観光 ＆ 昼食</h3>
+            <div class="choices-box">
+              <div class="choices-title">▼ 保存リストからの候補スポット:</div>
+              <div class="choice-item">🐟 <span class="tag tag-food">海鮮市場</span><a href="https://nagahamafish.jp/" target="_blank" rel="noopener noreferrer">長浜鮮魚市場（市場会館）</a></div>
+              <div class="choice-item">🍤 <span class="tag tag-food">天ぷら</span><a href="https://www.hirao-foods.net/" target="_blank" rel="noopener noreferrer">天麩羅処ひらお 天神アクロス福岡店</a></div>
+              <div class="choice-item">🍜 <span class="tag tag-food">超濃厚豚骨</span><a href="https://tabelog.com/fukuoka/A4001/A400106/40000405/" target="_blank" rel="noopener noreferrer">博多元気一杯!!</a></div>
+              <div class="choice-item">🛍️ <span class="tag tag-spot">散策</span><a href="https://canalcity.co.jp/" target="_blank" rel="noopener noreferrer">キャナルシティ博多</a></div>
+            </div>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">午後（久留米・吉野ヶ里エリア）</div>
+          <div class="content">
+            <h3>久留米エリアへ移動 ＆ 観光2箇所</h3>
+            <div class="choices-box">
+              <div class="choices-title">▼ 保存リストからの観光候補（2箇所選択）:</div>
+              <div class="choice-item">⛩️ <span class="tag tag-spot">絶景・神社</span><a href="http://www.kourataisya.or.jp/" target="_blank" rel="noopener noreferrer">筑後国一の宮 高良大社</a>（展望台からの眺望）</div>
+              <div class="choice-item">🏛️ <span class="tag tag-spot">史跡</span><a href="https://www.yoshinogari.jp/" target="_blank" rel="noopener noreferrer">吉野ヶ里遺跡（吉野ヶ里歴史公園）</a></div>
+            </div>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">18:30 - 20:30</div>
+          <div class="content">
+            <h3>久留米で夕食</h3>
+            <div class="choices-box">
+              <div class="choices-title">▼ ラーメン候補:</div>
+              <div class="choice-item">🍜 <span class="tag tag-food">老舗食堂</span><a href="https://tabelog.com/fukuoka/A4008/A400801/40000216/" target="_blank" rel="noopener noreferrer">沖食堂</a></div>
+              <div class="choice-item">🍜 <span class="tag tag-food">元祖豚骨</span><a href="https://www.taiho.net/" target="_blank" rel="noopener noreferrer">大砲ラーメン 本店</a></div>
+            </div>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">20:45</div>
+          <div class="content">
+            <h3>🏨 <a href="https://greenrichhotels.jp/kurume/" target="_blank" rel="noopener noreferrer">グリーンリッチホテル久留米</a> チェックイン</h3>
+            <p>※チェックイン期限: 21:00</p>
+            <p>館内の<strong>「天然温泉 六ツ門の湯」</strong>でゆったり入浴できます。</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day-card">
+      <div class="day-title">
+        <span class="badge">3日目</span>
+        <span>10/25(日) 久留米・筑後観光 ＆ 長野へ帰路</span>
+      </div>
+      <ul class="timeline">
+        <li class="timeline-item">
+          <div class="time">午前</div>
+          <div class="content">
+            <h3>久留米観光</h3>
+            <div class="choices-box">
+              <div class="choices-title">▼ 保存リストからの訪問候補:</div>
+              <div class="choice-item">⛩️ <span class="tag tag-spot">総本宮</span><a href="http://suitengu.net/" target="_blank" rel="noopener noreferrer">全国総本宮 水天宮</a>（筑後川沿いの清々しい境内）</div>
+              <div class="choice-item">🏛️ <span class="tag tag-spot">史跡</span><a href="https://www.yoshinogari.jp/" target="_blank" rel="noopener noreferrer">吉野ヶ里遺跡</a>（2日目に行かなかった場合）</div>
+            </div>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">12:00 - 14:00</div>
+          <div class="content">
+            <h3>筑後うどん・ラーメン昼食 ＆ 久留米駅へ移動</h3>
+            <div class="choices-box">
+              <div class="choices-title">▼ 筑後うどん名店候補:</div>
+              <div class="choice-item">🍲 <span class="tag tag-food">大人気店</span><a href="https://tabelog.com/fukuoka/A4008/A400804/40000078/" target="_blank" rel="noopener noreferrer">大力うどん</a>（みやま市瀬高）</div>
+              <div class="choice-item">🍲 <span class="tag tag-food">手打ち</span><a href="https://tabelog.com/fukuoka/A4008/A400801/40009776/" target="_blank" rel="noopener noreferrer">麺房 てうち庵 筑後店</a></div>
+              <div class="choice-item">🍜 <span class="tag tag-food">ラーメン</span><a href="https://tabelog.com/fukuoka/A4008/A400801/40000216/" target="_blank" rel="noopener noreferrer">沖食堂</a></div>
+            </div>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">14:48</div>
+          <div class="content">
+            <h3>JR久留米駅 出発（九州新幹線さくら560号）</h3>
+            <p>14:48 久留米発 → 15:04 博多着</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">15:10</div>
+          <div class="content">
+            <h3>博多駅 乗換（新幹線のぞみ52号）</h3>
+            <p>15:10 博多発 → 18:25 名古屋着</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <div class="time">18:40</div>
+          <div class="content">
+            <h3>名古屋駅 出発（特急しなの23号 長野行）</h3>
+            <div class="sub-stations">
+              <span>名古屋 18:40発</span> →
+              <span>塩尻 20:34着/20:36発</span> →
+              <span>篠ノ井 21:28着/21:29発</span> →
+              <span>長野 21:37着</span>
+            </div>
+            <p>長野駅到着、お疲れ様でした！</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="notice-box">
+        <strong>新幹線・特急予約メモ:</strong><br>
+        空席状況・予約は <a href="https://smart-ex.jp/" target="_blank" rel="noopener noreferrer">スマートEX</a>、<a href="https://www.jr-odekake.net/" target="_blank" rel="noopener noreferrer">JRおでかけネット (e5489)</a>、<a href="https://www.eki-net.com/" target="_blank" rel="noopener noreferrer">えきねっと</a> をご利用ください。
+      </div>
+    </div>
+
+    <!-- 温泉スポット一覧（保存画像より） -->
+    <div class="day-card">
+      <div class="day-title">
+        <span class="badge" style="background-color: var(--badge-spa);">特集</span>
+        <span>立ち寄り温泉スポット（保存リストより）</span>
+      </div>
+      <div class="spa-grid">
+        <div class="spa-card">
+          <h4>♨️ <a href="https://hakatayu.jp/" target="_blank" rel="noopener noreferrer">二日市温泉 博多湯</a></h4>
+          <p><strong>場所:</strong> 筑紫野市湯町（アイビーホテルから徒歩3分）<br>
+          万葉集にも詠まれた歴史ある源泉掛け流し公衆浴場。レトロな風情が最高です。</p>
+        </div>
+        <div class="spa-card">
+          <h4>♨️ <a href="https://greenrichhotels.jp/kurume/" target="_blank" rel="noopener noreferrer">天然温泉 六ツ門の湯</a></h4>
+          <p><strong>場所:</strong> 久留米市（グリーンリッチホテル久留米内）<br>
+          2日目宿泊ホテルの大浴場。弱アルカリ性の湯で部屋からそのまま入れます。</p>
+        </div>
+        <div class="spa-card">
+          <h4>♨️ <a href="https://tenpainosato.com/" target="_blank" rel="noopener noreferrer">筑紫野 天拝の郷</a></h4>
+          <p><strong>場所:</strong> 筑紫野市天拝坂<br>
+          太宰府・筑紫野を見下ろす展望露天風呂とサウナが大人気。自然食ビュッフェも併設。</p>
+        </div>
+        <div class="spa-card">
+          <h4>♨️ <a href="https://amandi.jp/chikushino/" target="_blank" rel="noopener noreferrer">筑紫野温泉アマンディ</a></h4>
+          <p><strong>場所:</strong> 筑紫野市原田<br>
+          バリ風のリゾート空間が広がる日帰り温泉。豊富な湯船や岩盤浴を備えています。</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Have a great trip to Kyushu! (2026理一旅行)</p>
+    </footer>
+  </div>
+</body>
+</html>
